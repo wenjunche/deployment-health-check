@@ -47,4 +47,4 @@ jobs:
 
       - name: Deploy Files
         run: |
-          echo ${{ env.S3_BUCKET }} 
+          echo "$S3_BUCKET" 
