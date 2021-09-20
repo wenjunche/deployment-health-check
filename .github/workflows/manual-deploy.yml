@@ -33,6 +33,16 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Set Dev
+        if: env.ENV == 'dev'
+        env:
+          S3_BUCKET: s3://cdn.openfin.co/health/dev
+
+      - name: Set Staging
+        if: env.ENV == 'staging'
+        env:
+          S3_BUCKET: s3://cdn.openfin.co/health/staging
+
       - name: Deploy Files
         run: |
-          echo ${{ env.ENV }} 
+          echo ${{ env.S3_BUCKET }} 
