@@ -43,4 +43,5 @@ jobs:
 
       - name: Deploy Files
         run: |
-          echo "$S3_BUCKET" 
+          echo "$S3_BUCKET"
+          aws s3 cp pinger.js $S3_BUCKET/pinger.js
