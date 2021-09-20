@@ -1,0 +1,38 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      enviroment:
+        description: "Enviroment to deploy to."
+        required: true
+        default: "dev"
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ github.event.inputs.enviroment }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Login to Github Private Repository
+        run: git config --global url."https://$GITHUB_ACTOR:${{secrets.GITHUB_TOKEN}}@github.com".insteadOf "https://github.com"
+
+      - name: Checkout Branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Deploy Files
+        run: |
+          echo ${{ env.ENV }} 
