@@ -37,11 +37,13 @@ jobs:
         if: env.ENV == 'dev'
         env:
           S3_BUCKET: s3://cdn.openfin.co/health/dev
+        run: echo 'deploy dev bucket'
 
       - name: Set Staging
         if: env.ENV == 'staging'
         env:
           S3_BUCKET: s3://cdn.openfin.co/health/staging
+        run: echo 'deploy staging bucket'
 
       - name: Deploy Files
         run: |
