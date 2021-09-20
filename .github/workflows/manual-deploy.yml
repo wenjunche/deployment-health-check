@@ -35,7 +35,7 @@ jobs:
 
       - name: Set Dev
         if: env.ENV == 'dev'
-        run: echo "S3_BUCKET=s3://cdn.openfin.co-health/deployment/dev" >> $GITHUB_ENV
+        run: echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment/dev" >> $GITHUB_ENV
 
       - name: Set Staging
         if: env.ENV == 'staging'
