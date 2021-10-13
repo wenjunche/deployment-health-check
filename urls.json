@@ -32,6 +32,11 @@
         {
             "href" : "https://cdn.openfin.co/health/index.html",
             "description" : "OpenFin CDN"
+        },
+        {
+            "href" : "https://workspace.openfin.co/workspace/app.json",
+            "description" : "OpenFin Workspaces"
         }
+
     ]
 }
