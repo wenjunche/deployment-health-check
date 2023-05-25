@@ -29,9 +29,12 @@ jobs:
         run: git config --global url."https://$GITHUB_ACTOR:${{secrets.GITHUB_TOKEN}}@github.com".insteadOf "https://github.com"
 
       - name: Checkout Branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
+
+      - name: Build
+        run: npm run build
 
       - name: Set Dev
         if: env.ENV == 'dev'
@@ -48,8 +51,5 @@ jobs:
       - name: Deploy Files
         run: |
           echo "$S3_BUCKET"
-          aws s3 cp pinger.js $S3_BUCKET/pinger.js
-          aws s3 cp favicon.ico $S3_BUCKET/favicon.ico
-          aws s3 cp index.html $S3_BUCKET/index.html
-          aws s3 cp styles.css $S3_BUCKET/styles.css
-          aws s3 cp urls.json $S3_BUCKET/urls.json
+          aws s3 sync ./dist $S3_BUCKET --recursive
+          
