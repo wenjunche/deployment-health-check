@@ -22,8 +22,29 @@ export const useEndpointsHealth = () => {
     setEndpointResponses(data);
   };
 
+  const addEndpoint = async (endpointName: string, endpointUrl: string) => {
+    console.log(endpointName, endpointUrl);
+
+    const data = await checkEndpoints([
+      {
+        id: crypto.randomUUID(),
+        displayName: endpointName,
+        url: endpointUrl,
+      },
+    ]);
+    setEndpointResponses((r) => [...r, data[0]]);
+  };
+
+  const removeEndpoint = async (endpointId: string) => {
+    setEndpointResponses((r) =>
+      r.filter((endpoint) => endpoint.id !== endpointId)
+    );
+  };
+
   return {
     revalidate,
     endpointResponses,
+    addEndpoint,
+    removeEndpoint,
   } as const;
 };
