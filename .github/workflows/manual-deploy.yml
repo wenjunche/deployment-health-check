@@ -41,23 +41,31 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
       - name: Set Dev
         if: env.ENV == 'dev'
-        run: echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment/dev" >> $GITHUB_ENV
+        run: |
+          echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment/dev" >> $GITHUB_ENV
+          echo "BASE_PATH=/health/deployment/dev" >> $GITHUB_ENV
 
       - name: Set Staging
         if: env.ENV == 'staging'
-        run: echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment/staging" >> $GITHUB_ENV
+        run: |
+          echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment/staging" >> $GITHUB_ENV
+          echo "BASE_PATH=/health/deployment/staging" >> $GITHUB_ENV
 
       - name: Set Prod
         if: env.ENV == 'prod'
-        run: echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment" >> $GITHUB_ENV
+        run: |
+          echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment" >> $GITHUB_ENV
+          echo "BASE_PATH=/health/deployment" >> $GITHUB_ENV
+          
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          BASE_PATH: ${{ github.env.BASE_PATH }}
 
       - name: Deploy Files
         run: |
           echo "$S3_BUCKET"
           aws s3 sync ./out $S3_BUCKET --recursive
-          
