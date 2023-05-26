@@ -104,7 +104,7 @@ export default function Home() {
           description="View the OpenFin Website"
         />
         <ExternalLinkCard
-          url="https://developers.openfin.co/of-docs/docs/container-overview"
+          url="https://developers.openfin.co/of-docs/docs/workspace-overview"
           title="Workspace Docs"
           description="View the OpenFin Workspace Documentation"
         />
