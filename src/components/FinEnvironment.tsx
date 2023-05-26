@@ -113,10 +113,6 @@ export const FinEnvironmentData = () => {
           </div>
         )}
         <div className="font-medium text-lg mb-1">
-          <strong>OpenFin Fins Protocol Supported:</strong>{" "}
-          {isFinsDetectionSupported ? "✅" : "❌"}
-        </div>
-        <div className="font-medium text-lg mb-1">
           <strong>OpenFin RVM Detected:</strong> {isFinsSupported ? "✅" : "❌"}
         </div>
         <div className="mt-4 flex flex-row gap-4">
