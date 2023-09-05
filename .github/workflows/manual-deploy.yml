@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "S3_BUCKET=s3://cdn.openfin.co-health/health/deployment" >> $GITHUB_ENV
           echo "BASE_PATH=/health/deployment" >> $GITHUB_ENV
-          
+
       - name: Build
         run: npm run build
         env:

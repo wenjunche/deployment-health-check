@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   const { toast } = useToast();
@@ -56,8 +57,8 @@ export default function Home() {
       <h1 className="text-4xl font-bold text-center pb-16">
         OpenFin Deployment Health Check
       </h1>
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
-        <Card className="lg:col-span-3 p-4 bg-white rounded-lg shadow-lg">
+      <div className="">
+        <Card className="lg:col-span-3 p-4 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">
               OpenFin Endpoints Health
@@ -93,9 +94,10 @@ export default function Home() {
                 Revalidate
               </button>
             </div>
+            <Separator orientation="horizontal" className="mt-4" />
           </CardContent>
+          <FinEnvironmentData />
         </Card>
-        <FinEnvironmentData />
       </div>
       <div className="mb-32 mt-16 grid text-center lg:mb-0 lg:grid-cols-3 lg:text-left">
         <ExternalLinkCard
