@@ -101,7 +101,7 @@ const ping = async (endpoint: Endpoint): Promise<EndpointStatus> => {
 };
 
 export const checkEndpoints = async (
-  endpoints: Endpoint[] = DEFAULT_END_POINTS
+  endpoints: Endpoint[] = DEFAULT_END_POINTS,
 ): Promise<EndpointStatus[]> => {
   return Promise.all(endpoints.map(ping));
 };

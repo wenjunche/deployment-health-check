@@ -1,19 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "./ui/use-toast";
+import { RVMInfo } from "@openfin/core/src/OpenFin";
+import {
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+  Tooltip,
+} from "./ui/tooltip";
 
 declare const fin:
   | import("@openfin/core/src/api/fin").FinApi<"window" | "view">
   | undefined;
+
+function mapRvmInstallPathToReadablePath(path: string): string {
+  const conversions: { [key: string]: string } = {
+    "^C:\\\\Users\\\\[^\\\\]+\\\\AppData\\\\Local\\\\OpenFin$": "LocalAppData",
+    "^C:\\\\Users\\\\[^\\\\]+\\\\AppData\\\\Roaming\\\\OpenFin$": "AppData",
+    "^C:\\\\Program Files \\(x86\\)\\\\OpenFin$": "Program Files (x86)",
+    "^C:\\\\Program Files\\\\OpenFin$": "Program Files",
+    "^C:\\\\ProgramData\\\\OpenFin$": "ProgramData",
+  };
+
+  // strip leading OpenFin.exe if present
+  if (path.endsWith("OpenFinRVM.exe")) {
+    path = path.replace(/\\OpenFinRVM.exe$/, "");
+  }
+
+  for (const pattern of Object.keys(conversions)) {
+    if (new RegExp(pattern).test(path)) {
+      return conversions[pattern];
+    }
+  }
+
+  return path;
+}
 
 export const FinEnvironmentData = () => {
   const { toast } = useToast();
   const [isFin, setIsFin] = useState<boolean>(false);
   const [availableRuntimes, setAvailableRuntimes] = useState<string[]>([]);
   const [currentRuntime, setCurrentRuntime] = useState<string>("");
-  const [rvmVersion, setRvmVersion] = useState<string>("");
+  const [rvmInfo, setRvmVersion] = useState<RVMInfo | null>(null);
   const [isFinsSupported, setIsFinsSupported] = useState<boolean>(false);
   const [isFinsDetectionSupported, setIsFinsDetectionSupported] =
     useState<boolean>(false);
@@ -30,11 +60,12 @@ export const FinEnvironmentData = () => {
         });
       fin.System.getRvmInfo()
         .then((rvmInfo) => {
-          setRvmVersion(rvmInfo.version);
+          setRvmVersion(rvmInfo);
+          setIsFinsSupported(true);
         })
         .catch((err) => {
           console.error(err);
-          setRvmVersion("Unknown");
+          setRvmVersion(null);
         });
       fin.System.getInstalledRuntimes()
         .then((runtimes) => {
@@ -66,7 +97,7 @@ export const FinEnvironmentData = () => {
   const handleCopyToClipboard = async () => {
     const data = {
       currentRuntime,
-      rvmVersion,
+      rvmVersion: rvmInfo,
       availableRuntimes,
       isFinsSupported,
       isFinsDetectionSupported,
@@ -88,15 +119,13 @@ export const FinEnvironmentData = () => {
     }
   };
   return (
-    <Card className="lg:col-span-3 p-4 bg-white rounded-lg shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold">OpenFin Info</CardTitle>
+    <>
+      <CardHeader className="pt-0">
+        <CardTitle className="text-2xl font-semibold mt-0">
+          OpenFin Info
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="font-medium text-lg mb-1">
-          <strong>Running in an OpenFin Environment:</strong>{" "}
-          {isFin ? "✅" : "❌"}
-        </div>
         {currentRuntime && (
           <div className="font-medium text-lg mb-1">
             <strong>Current Runtime:</strong> {currentRuntime}
@@ -107,10 +136,25 @@ export const FinEnvironmentData = () => {
             <strong>Available Runtimes:</strong> {availableRuntimes.join(", ")}
           </div>
         )}
-        {rvmVersion && (
-          <div className="font-medium text-lg mb-1">
-            <strong>RVM Version:</strong> {rvmVersion}
-          </div>
+        {rvmInfo && (
+          <>
+            <div className="font-medium text-lg mb-1">
+              <strong>RVM Version:</strong> {rvmInfo.version}
+            </div>
+            <div className="font-medium text-lg mb-1">
+              {/* <Tooltip */}
+              <strong>RVM Path: </strong>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>{mapRvmInstallPathToReadablePath(rvmInfo.path)}</span>
+                  </TooltipTrigger>
+                  <TooltipContent>{rvmInfo.path}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </>
         )}
         <div className="font-medium text-lg mb-1">
           <strong>OpenFin RVM Detected:</strong> {isFinsSupported ? "✅" : "❌"}
@@ -120,7 +164,7 @@ export const FinEnvironmentData = () => {
             disabled={!isFinsSupported}
             onClick={() => {
               window.open(
-                "fins://s3.amazonaws.com/ftp.openfin.co/Deployment/Deploymentapp.json"
+                "fins://s3.amazonaws.com/ftp.openfin.co/Deployment/Deploymentapp.json",
               );
             }}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
@@ -135,6 +179,6 @@ export const FinEnvironmentData = () => {
           </button>
         </div>
       </CardContent>
-    </Card>
+    </>
   );
 };

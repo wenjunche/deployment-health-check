@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 
 export const useEndpointsHealth = () => {
   const [endpointResponses, setEndpointResponses] = useState<EndpointStatus[]>(
-    []
+    [],
   );
 
   useEffect(() => {
     setEndpointResponses((r) =>
-      r.map((endpoint) => ({ ...endpoint, loading: true }))
+      r.map((endpoint) => ({ ...endpoint, loading: true })),
     );
 
     checkEndpoints().then(setEndpointResponses);
@@ -16,7 +16,7 @@ export const useEndpointsHealth = () => {
 
   const revalidate = async () => {
     setEndpointResponses((r) =>
-      r.map((endpoint) => ({ ...endpoint, loading: true }))
+      r.map((endpoint) => ({ ...endpoint, loading: true })),
     );
     const data = await checkEndpoints();
     setEndpointResponses(data);
@@ -37,7 +37,7 @@ export const useEndpointsHealth = () => {
 
   const removeEndpoint = async (endpointId: string) => {
     setEndpointResponses((r) =>
-      r.filter((endpoint) => endpoint.id !== endpointId)
+      r.filter((endpoint) => endpoint.id !== endpointId),
     );
   };
 
